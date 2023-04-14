@@ -129,27 +129,29 @@ def submit(request, course_id):
         submission = Submission.objects.create(enrollment=enrollment)
         
         # Collect the selected choices from exam form
-        submitted_anwsers = extract_answers(request)
+        submitted_answers = extract_answers(request)
 
-        for choice_id in submitted_anwsers:
+        for choice_id in submitted_answers:
             choice = get_object_or_404(Choice, pk=choice_id)
+            print("*****")
+            print(choice.choice_text)
 
             # Add each selected choice object to the submission object
-            submission.choices = choice
+            submission.choices.add(choice)
             submission.save()
 
     # Redirect to show_exam_result with the submission id
-    return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(course.id,)))
+    return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(course.id,submission.id)))
 
 # <HINT> A example method to collect the selected choices from the exam form from the request object
 def extract_answers(request):
-   submitted_anwsers = []
+   submitted_answers = []
    for key in request.POST:
        if key.startswith('choice'):
            value = request.POST[key]
            choice_id = int(value)
-           submitted_anwsers.append(choice_id)
-   return submitted_anwsers
+           submitted_answers.append(choice_id)
+   return submitted_answers
 
 
 # <HINT> Create an exam result view to check if learner passed exam and show their question results and result for each question,
@@ -164,7 +166,7 @@ def extract_answers(request):
 def show_exam_result(request, course_id, submission_id):
 
     course = get_object_or_404(Course, pk=course_id)
-    submisson = get_object_or_404(Submisson, pk=submission_id)
+    submisson = get_object_or_404(Submission, pk=submission_id)
     user = request.user
 
     is_enrolled = check_if_enrolled(user, course)
@@ -172,20 +174,26 @@ def show_exam_result(request, course_id, submission_id):
         
         # Get the selected choice ids from the submission record
         enrollment = Enrollment.objects.get(user=user, course=course)
-        submisson = Submission.objects.get(enrollment=enrollment)
         
+        context = {}
         grade = 0
 
         # For each selected choice, check if it is a correct answer or not
-        for choice in submisson.choices:
+        for choice in submisson.choices.all():
 
             # Calculate the total score by adding up the grades for all questions in the course
             if choice.is_correct:
                 grade += 1
 
             # Add the course, selected_ids, and grade to context for rendering HTML page
-            pass
+            
+            context["grade"] = grade
+            context["course"] = course
+            print("***total grade**")
+            print(grade)
+            print("***course details*")
+            print(course)
 
-    return render(request,'onlinecourse/exam_result_bootstrap.html', grade)
+    return render(request,'onlinecourse/exam_result_bootstrap.html', context)
 
 
