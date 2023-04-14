@@ -168,29 +168,35 @@ def show_exam_result(request, course_id, submission_id):
     course = get_object_or_404(Course, pk=course_id)
     submisson = get_object_or_404(Submission, pk=submission_id)
     user = request.user
-
     is_enrolled = check_if_enrolled(user, course)
+
     if is_enrolled and user.is_authenticated:
         
         # Get the selected choice ids from the submission record
         enrollment = Enrollment.objects.get(user=user, course=course)
         
         context = {}
-        grade = 0
+        total_corrects = 0
+        total_questions = 0
+
+        # total questions
+        for lesson in course.lesson_set.all():
+            total_questions += lesson.question_set.count() 
 
         # For each selected choice, check if it is a correct answer or not
         for choice in submisson.choices.all():
-
             # Calculate the total score by adding up the grades for all questions in the course
             if choice.is_correct:
-                grade += 1
+                total_corrects += 1
 
             # Add the course, selected_ids, and grade to context for rendering HTML page
             
-            context["grade"] = grade
+            context["grade"] = total_corrects/total_questions
             context["course"] = course
             print("***total grade**")
-            print(grade)
+            print(total_corrects)
+            print("***total questions**")
+            print(total_questions)
             print("***course details*")
             print(course)
 
