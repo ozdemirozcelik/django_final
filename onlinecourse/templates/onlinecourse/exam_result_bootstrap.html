@@ -47,29 +47,66 @@
         <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
         {% endif %}
         <div class="card-columns-vertical mt-1">
-        <h5 class="">Exam results</h5>
+        <h5 class="text-dark"><b>Exam results</b></h5>
 
             {% for lesson in course.lesson_set.all %}
-            {% for question in lesson.question_set.all %}              
-                    <div class="card mt-1">
-                        <div class="card-header"><h5>{{ question.question_text}}</h5></div>
-                        {% csrf_token %}
-                        <div class="form-group">
-                            {% for choice in question.choice_set.all %}
-                            
-                            {% if choice.is_correct %}
-                            <div class="card-header">
-                                <p class="text-success"> Correct Answer: {{ choice.choice_text }}</p>   
-                            </div>
-                            {% endif %}
+                {% for question in lesson.question_set.all %}              
+                        <div class="card mt-1">
+                            <div class="card-header"><h5>{{ question.question_text}}</h5></div>
+                            {% csrf_token %}
+                            <div class="form-group">
 
-                            {% endfor %}
+                                                        
+                                {% for choice in question.choice_set.all %}
+                                
+                                {% if choice.is_correct %}
+                                <div class="card-header">
+                                    <p class="text-success"><b>Correct Answer: {{ choice.choice_text }}</b></p>   
+                                </div>
+                                {% else %}
+
+                                <div class="card-header">
+                                    <p class="text-danger"><b>Wrong Answer: {{ choice.choice_text }}</b></p>   
+                                </div>
+
+                                {% endif %}
+
+                                {% endfor %}
+
+
+                                <!-- {% for selected in choices %} 
+                                    <div class="card-header">
+                                    {% if selected.is_correct %}
+                                        <p class="text-success"><b>Correct Answer: {{ selected.choice_text }}</b></p> 
+                                    {% else %}  
+                                        <p class="text-warning"><b>Not selected: {{ selected.choice_text }}</b></p>   
+                                    {% endif %}
+                                    </div>
+                                {% endfor %} -->
+                        
+                                <!-- {% for choice in question.choice_set.all %}
+                                
+                                {% if choice.is_correct %}
+                                <div class="card-header">
+                                    <p class="text-success"><b>Correct Answer: {{ choice.choice_text }}</b></p>   
+                                </div>
+                                {% endif %}
+
+                                {% endfor %} -->
+                            </div>
                         </div>
-                    </div>
-            {% endfor %}
+                {% endfor %}
             {% endfor %}
 
         </div>
+
+        {% for selected in choices %} 
+        <div class="card-header">
+            <p class="text-warning"><b>Not selected: {{ selected.choice_text }}</b></p>   
+        </div>
+        {% endfor %}
+
+
     </div>
 </body>
 </html>
