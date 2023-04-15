@@ -55,44 +55,23 @@
                             <div class="card-header"><h5>{{ question.question_text}}</h5></div>
                             {% csrf_token %}
                             <div class="form-group">
-
-                                                        
+                                                     
                                 {% for choice in question.choice_set.all %}
-                                
-                                {% if choice.is_correct %}
-                                <div class="card-header">
-                                    <p class="text-success"><b>Correct Answer: {{ choice.choice_text }}</b></p>   
-                                </div>
-                                {% else %}
-
-                                <div class="card-header">
-                                    <p class="text-danger"><b>Wrong Answer: {{ choice.choice_text }}</b></p>   
-                                </div>
-
-                                {% endif %}
-
+                                    {% for selected in choices %}  
+                                        {% if choice.choice_text == selected.choice_text %}                            
+                                            {% if choice.is_correct %}
+                                            <div class="card-header">
+                                                <p class="text-success"><b>Correct Answer: {{ choice.choice_text }}</b></p>   
+                                            </div> 
+                                            {% else %}
+                                            <div class="card-header">
+                                                <p class="text-danger"><b>Wrong Answer: {{ choice.choice_text }}</b></p>   
+                                            </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %} 
                                 {% endfor %}
 
-
-                                <!-- {% for selected in choices %} 
-                                    <div class="card-header">
-                                    {% if selected.is_correct %}
-                                        <p class="text-success"><b>Correct Answer: {{ selected.choice_text }}</b></p> 
-                                    {% else %}  
-                                        <p class="text-warning"><b>Not selected: {{ selected.choice_text }}</b></p>   
-                                    {% endif %}
-                                    </div>
-                                {% endfor %} -->
-                        
-                                <!-- {% for choice in question.choice_set.all %}
-                                
-                                {% if choice.is_correct %}
-                                <div class="card-header">
-                                    <p class="text-success"><b>Correct Answer: {{ choice.choice_text }}</b></p>   
-                                </div>
-                                {% endif %}
-
-                                {% endfor %} -->
                             </div>
                         </div>
                 {% endfor %}
@@ -100,11 +79,12 @@
 
         </div>
 
+<!-- 
         {% for selected in choices %} 
         <div class="card-header">
             <p class="text-warning"><b>Not selected: {{ selected.choice_text }}</b></p>   
         </div>
-        {% endfor %}
+        {% endfor %} -->
 
 
     </div>
