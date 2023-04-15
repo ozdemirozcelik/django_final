@@ -37,47 +37,49 @@
 
 <div class="container-fluid">
     {% if grade >= 0.8 %} 
-    <div class="alert alert-success">
-        <h5><b>Congratulations</b> You have passed the exam with score {% widthratio grade 1 100 %}/100<h5>
-    </div>
-        {% else %}
+        <div class="alert alert-success">
+            <h5><b>Congratulations</b> You have passed the exam with score {% widthratio grade 1 100 %}/100<h5>
+        </div>
+    {% else %}
         <div class="alert alert-danger">
             <h5><b>Failed</b> Sorry, you have failed the exam with score {% widthratio grade 1 100 %}/100<h5>
         </div>
         <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
-        {% endif %}
-        <div class="card-columns-vertical mt-1">
-        <h5 class="text-dark"><b>Exam results</b></h5>
+    {% endif %}
 
-            {% for lesson in course.lesson_set.all %}
-                {% for question in lesson.question_set.all %}              
-                        <div class="card mt-1">
-                            <div class="card-header"><h5>{{ question.question_text}}</h5></div>
-                            {% csrf_token %}
-                            <div class="form-group">
-                                                     
-                                {% for choice in question.choice_set.all %}
-                                    {% for selected in choices %}  
-                                        {% if choice.choice_text == selected.choice_text %}                            
-                                            {% if choice.is_correct %}
-                                            <div class="card-header">
-                                                <p class="text-success"><b>Correct Answer: {{ choice.choice_text }}</b></p>   
-                                            </div> 
-                                            {% else %}
-                                            <div class="card-header">
-                                                <p class="text-danger"><b>Wrong Answer: {{ choice.choice_text }}</b></p>   
-                                            </div>
-                                            {% endif %}
+    <div class="card-columns-vertical mt-1">
+    <h5 class="text-dark"><b>Exam results</b></h5>
+
+        {% for lesson in course.lesson_set.all %}
+            {% for question in lesson.question_set.all %}              
+                    <div class="card mt-1">
+                        <div class="card-header"><h5>{{ question.question_text}}</h5></div>
+                        {% csrf_token %}
+                        <div class="form-group">
+                                                    
+                            {% for choice in question.choice_set.all %}
+                                {% for selected in choices %}  
+                                    {% if choice.id == selected.id %}                            
+                                        {% if choice.is_correct %}
+                                        <div class="card-header">
+                                            <p class="text-success"><b>Correct Answer: {{ choice.choice_text }}</b></p>   
+                                        </div> 
+                                        {% else %}  
+                                        <div class="card-header">
+                                            <!-- <p class="text-danger"><b>Wrong Answer: {{ choice.choice_text }}</b></p>    -->
+                                            <p class="text-warning"><b>Not Selected: {{ choice.choice_text }}</b></p>
+                                        </div>
                                         {% endif %}
-                                    {% endfor %} 
-                                {% endfor %}
+                                    {% endif %}
+                                {% endfor %} 
+                            {% endfor %}
 
-                            </div>
                         </div>
-                {% endfor %}
+                    </div>
             {% endfor %}
+        {% endfor %}
 
-        </div>
+    </div>
 
 <!-- 
         {% for selected in choices %} 
@@ -87,6 +89,6 @@
         {% endfor %} -->
 
 
-    </div>
+</div>
 </body>
 </html>
