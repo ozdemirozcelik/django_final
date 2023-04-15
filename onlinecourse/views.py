@@ -193,6 +193,7 @@ def show_exam_result(request, course_id, submission_id):
             
             context["grade"] = total_corrects/total_questions
             context["course"] = course
+            context["submission"] = submisson.choices.all()
             print("***total grade**")
             print(total_corrects)
             print("***total questions**")
